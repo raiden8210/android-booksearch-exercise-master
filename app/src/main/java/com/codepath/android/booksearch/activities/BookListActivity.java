@@ -49,13 +49,14 @@ public class BookListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Connect Views and model:
+        abooks = new ArrayList<>();
 
         rvBooks = findViewById(R.id.rvBooks);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(ProgressBar.INVISIBLE);
-        abooks = new ArrayList<>();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         // Initialize the adapter
         bookAdapter = new BookAdapter(this, abooks);
@@ -67,20 +68,13 @@ public class BookListActivity extends AppCompatActivity {
                         "An item at position " + position + " clicked!",
                         Toast.LENGTH_SHORT).show();
 
-
+                // Get Book at the given position
                 Book book = abooks.get(position);
-                String title = book.getTitle();
-                String author = book.getAuthor();
-                String cover = book.getCoverUrl();
 
+                // Create Intent to start BookDetailActivity
                 Intent i = new Intent(BookListActivity.this, BookDetailActivity.class);
                 i.putExtra(KEY_BOOK, Parcels.wrap(book));
                 startActivity(i);
-
-                // Handle item click here:
-                // Create Intent to start BookDetailActivity
-                // Get Book at the given position
-                // Pass the book into details activity using extra
             }
         });
 
@@ -89,8 +83,6 @@ public class BookListActivity extends AppCompatActivity {
 
         // Set layout manager to position the items
         rvBooks.setLayoutManager(new LinearLayoutManager(this));
-
-        // Fetch the data remotely
     }
 
     // Executes an API call to the OpenLibrary search endpoint, parses the results
@@ -99,7 +91,6 @@ public class BookListActivity extends AppCompatActivity {
         progressBar.setVisibility(ProgressBar.VISIBLE);
         client = new BookClient();
         client.getBooks(query, new JsonHttpResponseHandler() {
-
 
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON response) {
@@ -135,20 +126,18 @@ public class BookListActivity extends AppCompatActivity {
     }
 
     @Override
+    //Purpose:         Inflates and initializes the SearchView --> onQueryTextSubmit():  queries for a specific book through here!
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_book_list, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        //final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
         final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // perform query here
                 Toast.makeText(getApplicationContext(), "It's invoked. It was clicked", Toast.LENGTH_SHORT).show();
-                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
-                // see https://code.google.com/p/android/issues/detail?id=24599
                 fetchBooks(query);
                 searchView.clearFocus();
                 return true;
@@ -156,16 +145,14 @@ public class BookListActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 return false;
             }
         });
         return super.onCreateOptionsMenu(menu);
     }
 
-
-    //----------------For preparing and handling the ProgressBar
     @Override
+    //Purpose:          Handles when menu items are clicked.
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long

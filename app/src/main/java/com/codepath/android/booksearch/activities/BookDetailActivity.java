@@ -50,25 +50,23 @@ public class BookDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
-        // Fetch views
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        //Fetch views:
         ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvAuthor = (TextView) findViewById(R.id.tvAuthor);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // Extract book object from intent extras
+        // Extract book object from intent extras:
         Intent i = getIntent();
         Book bookReceived = (Book) Parcels.unwrap(i.getParcelableExtra(KEY_BOOK));
 
         // Use book object to populate data into views
         tvTitle.setText(bookReceived.getTitle());
         tvAuthor.setText(bookReceived.getAuthor());
-       // Glide.with(this).load(bookReceived.getCoverUrl()).into(ivBookCover);
-
-        // Load image async from remote URL, setup share when completed
+        getSupportActionBar().setTitle(bookReceived.getTitle());
+        // Load the book cover + setup shareIntent when completed:
         GlideApp.with(this).load(bookReceived.getCoverUrl())
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -85,30 +83,57 @@ public class BookDetailActivity extends AppCompatActivity {
                     }
                 })
                 .into(ivBookCover);
-
-
-        getSupportActionBar().setTitle(bookReceived.getTitle());
-
     }
 
-    // Attaches the share intent to the share menu item provider
+
+    @Override
+    //Purpose:          Handles all clicks to menu items:
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //------------- Share Intent methods:---------------------
+    @Override
+    //Purpose:          Initialized the ShareActionProvider, "shareAction"
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_book_detail, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        // Fetch reference to the share action provider
+        shareAction = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        attachShareIntentAction();                  // called here in case this method fires second (may be fired through onResourceReady when loading the image)
+        return true;
+    }
+
+    //Purpose:       Attaches the share intent to the share menu item provider
     public void attachShareIntentAction() {
         if (shareAction != null && shareIntent != null)
             shareAction.setShareIntent(shareIntent);
     }
 
-    // Gets the image URI and setup the associated share intent to hook into the provider
+    //Purpose:      Gets the image URI and setup the associated share intent to hook into the provider
     public void prepareShareIntent(Bitmap drawableImage) {
         // Fetch Bitmap Uri locally
-        Uri bmpUri = getBitmapFromDrawable(drawableImage);// see previous remote images section and notes for API > 23
+        Uri bmpUri = getBitmapFromDrawable(drawableImage);
+
         // Construct share intent as described above based on bitmap
         shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setAction(Intent.ACTION_SEND);                          //Intend to send this URI to another app on this phone
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
         shareIntent.setType("image/*");
     }
 
-    // Method when launching drawable within Glide
+    //Purpose:      Method when launching drawable within Glide
     public Uri getBitmapFromDrawable(Bitmap bmp){
 
         // Store image to default external storage directory
@@ -123,42 +148,11 @@ public class BookDetailActivity extends AppCompatActivity {
             out.close();
 
             // wrap File object into a content provider. NOTE: authority here should match authority in manifest declaration
-            bmpUri = FileProvider.getUriForFile(BookDetailActivity.this, "com.codepath.fileprovider.booksearch", file);  // use this version for API >= 24
-
-            // **Note:** For API < 24, you may use bmpUri = Uri.fromFile(file);
-
+            bmpUri = FileProvider.getUriForFile(BookDetailActivity.this, "com.codepath.fileprovider.booksearch", file);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return bmpUri;
 
-    }
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_book_detail, menu);
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-        // Fetch reference to the share action provider
-        shareAction = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        attachShareIntentAction(); // call here in case this method fires second
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
