@@ -5,15 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".activities.BookListActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvBooks"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <!-- Load the toolbar here -->
     <include
         layout="@layout/toolbar"
+        android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvBooks"
+        android:layout_below="@id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

@@ -25,6 +25,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,8 @@ import okhttp3.Headers;
 
 
 public class BookListActivity extends AppCompatActivity {
+    private static final String KEY_BOOK = "bookInquired";
+
     private RecyclerView rvBooks;
     private BookAdapter bookAdapter;
     private BookClient client;
@@ -65,10 +68,7 @@ public class BookListActivity extends AppCompatActivity {
                 String cover = book.getCoverUrl();
 
                 Intent i = new Intent(BookListActivity.this, BookDetailActivity.class);
-                i.putExtra("Title", title);
-                i.putExtra("Author", author);
-                i.putExtra("Cover", cover);
-
+                i.putExtra(KEY_BOOK, Parcels.wrap(book));
                 startActivity(i);
 
                 // Handle item click here:
@@ -130,7 +130,7 @@ public class BookListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_book_list, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         //final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         final SearchView searchView = (SearchView) searchItem.getActionView();
