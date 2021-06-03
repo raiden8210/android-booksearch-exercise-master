@@ -1,9 +1,18 @@
 # Book Search App
+This Android app implements the extensions below to the original base application provided by CodePath. 
 
-Android app that leverages the [OpenLibrary API](https://openlibrary.org/developers/api) to search books and display cover images. This app is to be used as the base app for adding suggested extensions.
+## Extensions Implemented
 
-![Imgur](http://i.imgur.com/NJmF42Yl.png)
+- [x] Use SearchView to search for books with a title
+- [x] Show ProgressBar before each network request
+- [x] Add a detail view to display more information about the selected book from the list
+- [x] Use a share intent to recommend a book to friends
 
+![Demo - Updated 6/3/2021](walkthrough.gif)
+
+# Original CodePath Application:
+ This is an Android app that leverages the [OpenLibrary API](https://openlibrary.org/developers/api) to search books and display cover images. This app is to be used as the base app for adding suggested extensions.
+ 
 ## Overview
 
 The app does the following:
@@ -23,14 +32,7 @@ To achieve this, there are four different components in this app:
 ## Usage
 This app is intended to be the base project on top of which new features can be added. To use it, clone the project and import it using the following steps:
 
-![Imgur](http://i.imgur.com/joPKoTk.gif)
-
-## Suggested Extensions
-
-1. Use SearchView to search for books with a title
-2. Show ProgressBar before each network request
-3. Add a detail view to display more information about the selected book from the list
-4. Use a share intent to recommend a book to friends
+![Imgur](http://i.imgur.com/NJmF42Yl.png)
 
 ## Libraries
 
