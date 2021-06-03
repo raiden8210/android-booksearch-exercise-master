@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -35,6 +37,8 @@ import okhttp3.Headers;
 public class BookListActivity extends AppCompatActivity {
     private static final String KEY_BOOK = "bookInquired";
 
+    // Instance of the progress action-view
+    ProgressBar progressBar;
     private RecyclerView rvBooks;
     private BookAdapter bookAdapter;
     private BookClient client;
@@ -49,6 +53,8 @@ public class BookListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         rvBooks = findViewById(R.id.rvBooks);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
         abooks = new ArrayList<>();
 
         // Initialize the adapter
@@ -90,6 +96,7 @@ public class BookListActivity extends AppCompatActivity {
     // Executes an API call to the OpenLibrary search endpoint, parses the results
     // Converts them into an array of book objects and adds them to the adapter
     private void fetchBooks(String query) {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
         client = new BookClient();
         client.getBooks(query, new JsonHttpResponseHandler() {
 
@@ -99,6 +106,7 @@ public class BookListActivity extends AppCompatActivity {
                 try {
                     JSONArray docs;
                     if (response != null) {
+                        progressBar.setVisibility(ProgressBar.INVISIBLE);
                         // Get the docs json array
                         docs = response.jsonObject.getJSONArray("docs");
                         // Parse json array into array of model objects
@@ -156,7 +164,7 @@ public class BookListActivity extends AppCompatActivity {
     }
 
 
-
+    //----------------For preparing and handling the ProgressBar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
